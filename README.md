@@ -57,12 +57,11 @@ The result is a meditative visualization — a **Genesis moment**, where energy 
 ## Setup & Run
 
 1. **Clone this repository**
+
    ```bash
    git clone https://github.com/yourusername/p5js-osc-Genesis_Sphere.git
    cd p5js-osc-Genesis_Sphere
    ```
-
-````
 
 2. **Start the OSC Bridge**
    Run your `bridge.js` (Node.js + Socket.IO) server to forward OSC messages:
@@ -70,12 +69,14 @@ The result is a meditative visualization — a **Genesis moment**, where energy 
    ```bash
    node bridge.js
    ```
+
 3. **Send OSC data**
    From Processing (or any OSC source), send messages to:
 
    ```
    /uv/eq [bass, mid, treble]
    ```
+
 4. **Run the sketch**
    Open `index.html` with **Live Server** or any local HTTP server.
 
@@ -85,16 +86,13 @@ The result is a meditative visualization — a **Genesis moment**, where energy 
 
 This experiment explores the intersection between **sound, structure, and organic form**,
 asking how vibration could be the first gesture of life itself.
- *Ursula Vallejo Janne*
+_Ursula Vallejo Janne_
 
 ---
 
-##  Video
-
-
+## Video
 
 ![Genesis Sphere demo](assets/screenshot.png)
-
 
 ---
 
@@ -104,6 +102,6 @@ asking how vibration could be the first gesture of life itself.
 Released under the [MIT License](./LICENSE).
 You are free to explore, remix, and use this work for educational or artistic purposes.
 
+```
 
-
-````
+```
