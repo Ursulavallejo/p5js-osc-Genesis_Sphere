@@ -61,6 +61,7 @@ The result is a meditative visualization — a **Genesis moment**, where energy 
    ```bash
    git clone https://github.com/yourusername/p5js-osc-Genesis_Sphere.git
    cd p5js-osc-Genesis_Sphere
+   npm install
    ```
 
 2. **Start the OSC Bridge**
