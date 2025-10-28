@@ -97,6 +97,23 @@ _Ursula Vallejo Janne_
 
 ---
 
+### Signal Flow (short)
+
+Processing does the audio analysis and sends bass/mid/treble via OSC to a Node.js Socket.IO bridge; the p5.js sketch receives those values in the browser and animates Genesis Sphere in real time.
+
+Processing → analyzes the audio input (FFT + noise gate + hysteresis) and sends
+/uv/eq [bass, mid, treble] via OSC to the bridge.
+
+Node.js Bridge (Socket.IO v4) → receives the OSC data and rebroadcasts it as WebSocket events to connected clients.
+
+p5.js (browser) → listens to these values and animates Genesis Sphere in real time:
+bass → accelerates the global spin
+mid → deforms the membrane
+treble → increases brightness and outline growth
+overall energy → triggers the emission of halo sparks.
+
+---
+
 ## License
 
 © 2025 **Ursula Vallejo Janne**
