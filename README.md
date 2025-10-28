@@ -93,11 +93,7 @@ _Ursula Vallejo Janne_
 
 ## Video
 
-
 https://github.com/user-attachments/assets/f59e8212-e4df-4280-81db-5164f14be030
-
-
-
 
 ---
 
@@ -123,7 +119,3 @@ overall energy → triggers the emission of halo sparks.
 © 2025 **Ursula Vallejo Janne**
 Released under the [MIT License](./LICENSE).
 You are free to explore, remix, and use this work for educational or artistic purposes.
-
-```
-
-```
