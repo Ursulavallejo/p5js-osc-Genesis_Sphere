@@ -1,4 +1,4 @@
-# Genesis Sphere — An Audio-Reactive Energy Core (p5.js + OSC)
+# Genesis Sphere — An Audio-Reactive Energy Core (p5.js + OSC + Processing)
 
 ### by Ursula Vallejo Janne
 
@@ -6,8 +6,12 @@
 
 ## Overview
 
-**Genesis Sphere** is an **audio-reactive generative art experiment** created with **p5.js** and **OSC** as part of the _Creative Coding_ course at **Högskola Dalarna**.
-It visualizes a **primordial nucleus of life** — a sphere of living energy that responds to sound frequencies and transforms in real time.
+**Genesis Sphere** is an **audio-reactive generative art experiment** developed with **Processing (Java)**, **p5.js**, and **OSC**, as part of the _Creative Coding_ course at **Högskola Dalarna**.
+
+It visualizes a **primordial nucleus of life** — a sphere of living energy that reacts to sound frequencies and transforms in real time.
+
+In this system, **Processing** performs the **audio analysis** (FFT + noise gate + hysteresis) and sends **bass, mid, and treble** data via **OSC** to a custom **Node.js Socket.IO bridge**, which forwards the values to the **p5.js** sketch in the browser.
+There, the visualization interprets sound as movement, light, and deformation — a digital echo of how **vibration becomes form**.
 
 The work blends mathematical structure and organic motion, exploring how **vibration becomes form** — how sound could be a way visual creation.
 
