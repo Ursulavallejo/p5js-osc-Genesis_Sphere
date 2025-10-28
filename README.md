@@ -93,7 +93,11 @@ _Ursula Vallejo Janne_
 
 ## Video
 
-![Genesis Sphere demo](assets/screenshot.png)
+
+https://github.com/user-attachments/assets/f59e8212-e4df-4280-81db-5164f14be030
+
+
+
 
 ---
 
