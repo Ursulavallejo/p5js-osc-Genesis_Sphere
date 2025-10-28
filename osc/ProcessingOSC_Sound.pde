@@ -1,5 +1,29 @@
-// === Processing → OSC: envía graves/medios/agudos con NOISE GATE + HISTERESIS ===
-// Requiere: Sound (incluida) + oscP5 (Contrib Manager)
+/**
+ * === Genesis Sphere — Audio Analysis via Processing → OSC Bridge ===
+ *
+ * This Processing (Java) sketch captures live audio from the microphone,
+ * performs a real-time frequency analysis (FFT) with a per-band noise gate
+ * and global hysteresis, and sends the resulting bass, mid, and treble values
+ * via OSC to a Node.js Socket.IO bridge.
+ *
+ * The bridge then rebroadcasts these values to any connected p5.js clients
+ * (in the browser), allowing them to create audio-reactive visualizations.
+ *
+ * Structure:
+ * Processing → (FFT + noise gate + hysteresis)
+ *    → OSC → Node.js Bridge → WebSocket → p5.js (visuals)
+ *
+ * Requirements:
+ * - Processing Sound library (included)
+ * - oscP5 and netP5 (via Contribution Manager)
+ *
+ * Author: Ursula Vallejo Janne
+ * Project: Genesis Sphere (Creative Coding — Högskola Dalarna)
+ * Year: 2025
+ */
+
+// === Processing → OSC: sends bass/mid/treble with NOISE GATE + HYSTERESIS ===
+// Requires: Sound (included) + oscP5 (via Contribution Manager)
 
 import processing.sound.*;
 import oscP5.*;
@@ -11,12 +35,12 @@ FFT fft;
 int BANDS = 512;
 float sampleRate = 44100;
 
-// Bandas moderadas (móvil)
+// Moderate frequency bands (mobile-friendly)
 float BASS_LO = 80,   BASS_HI = 260;
 float MID_LO  = 260,  MID_HI  = 3500;
 float TRE_LO  = 3500, TRE_HI  = 9000;
 
-// OSC
+// OSC configuration
 OscP5 oscP5;
 NetAddress dest;
 String OSC_ADDR     = "/uv/eq";
@@ -24,27 +48,27 @@ String OSC_ADDR_DOM = "/uv/dominant";
 String BRIDGE_HOST  = "127.0.0.1";
 int    BRIDGE_OSC_PORT = 8000;
 
-// Suavizado local (0 = sin suavizado, 1 = muy lento)
+// Local smoothing (0 = no smoothing, 1 = very slow)
 float sBass = 0, sMid = 0, sTre = 0;
 float SMOOTH = 0.22;
 
-// Ganancias / normalización (moderadas)
-float BAND_GAIN = 10.0; // ↓ antes 12
+// Gain / normalization (moderate)
+float BAND_GAIN = 10.0; // ↓ previously 12
 float BASS_BOOST = 1.3;
 float MID_BOOST  = 1.0;
 float TRE_BOOST  = 1.1;
 
-// ---------- Noise gate por banda ----------
+// ---------- Noise gate per band ----------
 float floorBass = 0, floorMid = 0, floorTre = 0;
-// El "piso" (ruido ambiente) aprende DESPACIO:
-float FLOOR_ALPHA = 0.004;    // qué rápido aprende el piso (muy lento)
-// Margen extra por encima del piso para dejar pasar señal:
-float FLOOR_MARGIN = 0.025;   // 2.5% del rango (ajusta a gusto)
+// The "floor" (ambient noise) learns SLOWLY:
+float FLOOR_ALPHA = 0.004;    // how fast the floor adapts (very slow)
+// Extra margin above the floor to let signal pass:
+float FLOOR_MARGIN = 0.025;   // 2.5% of the range (adjust as needed)
 
-// ---------- Puerta global con histéresis ----------
+// ---------- Global gate with hysteresis ----------
 boolean gateOpen = false;
-float GATE_ON  = 0.18;  // abre por encima de este nivel de energía
-float GATE_OFF = 0.10;  // cierra por debajo de este nivel
+float GATE_ON  = 0.18;  // opens above this energy level
+float GATE_OFF = 0.10;  // closes below this energy level
 
 void setup() {
   size(640, 220);
@@ -52,7 +76,7 @@ void setup() {
 
   mic = new AudioIn(this, 0);
   mic.start();
-  mic.amp(1.2);  // ↓ antes 1.6
+  mic.amp(1.2);  // ↓ previously 1.6
 
   fft = new FFT(this, BANDS);
   fft.input(mic);
@@ -68,32 +92,32 @@ void draw() {
   background(0);
   fft.analyze();
 
-  // --- Energía cruda por banda ---
+  // --- Raw energy per frequency band ---
   float bass = bandEnergy(BASS_LO, BASS_HI) * BASS_BOOST;
   float mid  = bandEnergy(MID_LO,  MID_HI)  * MID_BOOST;
   float tre  = bandEnergy(TRE_LO,  TRE_HI)  * TRE_BOOST;
 
-  // Compresión log (suave) + clamp 0..1
+  // Log compression (gentle) + clamp 0..1
   bass = constrain((float)Math.log1p(5.0 * bass), 0, 1);
   mid  = constrain((float)Math.log1p(5.0 * mid),  0, 1);
   tre  = constrain((float)Math.log1p(5.0 * tre),  0, 1);
 
-  // --- Actualiza pisos (ruido ambiente) MUY lentamente ---
+  // --- Slowly update floor (ambient noise) ---
   floorBass = lerp(floorBass, bass, FLOOR_ALPHA);
   floorMid  = lerp(floorMid,  mid,  FLOOR_ALPHA);
   floorTre  = lerp(floorTre,  tre,  FLOOR_ALPHA);
 
-  // --- Aplica gate por banda: recorta por debajo de piso+margen ---
+  // --- Apply per-band gate: cut below floor + margin ---
   float gBass = max(0, bass - floorBass - FLOOR_MARGIN);
   float gMid  = max(0, mid  - floorMid  - FLOOR_MARGIN);
   float gTre  = max(0, tre  - floorTre  - FLOOR_MARGIN);
 
-  // Suavizado (después del gate por banda)
+  // Smoothing (after the per-band gate)
   sBass = lerp(sBass, gBass, 1.0 - SMOOTH);
   sMid  = lerp(sMid,  gMid,  1.0 - SMOOTH);
   sTre  = lerp(sTre,  gTre,  1.0 - SMOOTH);
 
-  // --- Gate global con histéresis ---
+  // --- Global gate with hysteresis ---
   float energy = (sBass + sMid + sTre) / 3.0;
   if (gateOpen) {
     if (energy < GATE_OFF) gateOpen = false;
@@ -105,12 +129,12 @@ void draw() {
   float outMid  = gateOpen ? sMid  : 0;
   float outTre  = gateOpen ? sTre  : 0;
 
-  // Enviar OSC
+  // Send OSC
   OscMessage m = new OscMessage(OSC_ADDR);
   m.add(outBass); m.add(outMid); m.add(outTre);
   oscP5.send(m, dest);
 
-  // Dominante (opcional)
+  // Dominant band (optional)
   int dom = 0; float maxv = outBass;
   if (outMid > maxv) { maxv = outMid; dom = 1; }
   if (outTre > maxv) { maxv = outTre; dom = 2; }
@@ -127,7 +151,7 @@ void draw() {
   text("SMOOTH="+SMOOTH+"  amp=1.2  BAND_GAIN="+BAND_GAIN+"  margin="+FLOOR_MARGIN, 10, 94);
 }
 
-// Suma de energía de bins entre fLo..fHi; escalado base
+// Sum of FFT bin energy between fLo..fHi; base scaling
 float bandEnergy(float fLo, float fHi) {
   int iLo = freqToBin(fLo);
   int iHi = freqToBin(fHi);
