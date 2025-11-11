@@ -16,7 +16,11 @@ There, the visualization interprets sound as movement, light, and deformation �
 The work blends mathematical structure and organic motion, exploring how **vibration becomes form** — how sound could be a way visual creation.
 
 ---
+## Video
 
+https://github.com/user-attachments/assets/f59e8212-e4df-4280-81db-5164f14be030
+
+---
 ## Concept
 
 At the core lies a pulsating, self-contained “molecule” surrounded by glowing particles.
@@ -95,11 +99,7 @@ _Ursula Vallejo Janne_
 
 ---
 
-## Video
 
-https://github.com/user-attachments/assets/f59e8212-e4df-4280-81db-5164f14be030
-
----
 
 ### Signal Flow (short)
 
